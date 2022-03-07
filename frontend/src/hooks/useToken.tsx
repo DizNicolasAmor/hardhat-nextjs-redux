@@ -1,36 +1,33 @@
 import { Contract, ethers, providers } from 'ethers';
 import { useEffect, useState } from 'react';
-import MyToken from '../artifacts/contracts/MyToken.sol/MyToken.json';
-import { CONTRACT_ADDRESSES } from '../utils/constants';
+import MyToken from '../../artifacts/contracts/MyToken.sol/MyToken.json';
+import { CONTRACT_ADDRESSES, LOCALHOST_CHAIN_ID } from '../utils/constants';
 
-type Web3Props = {
-  web3: providers.Web3Provider | undefined;
-};
-
-const useToken = ({ web3 }: Web3Props) => {
+const useToken = (chainId: number) => {
   const [contractAddress, setContractAddress] = useState<string>(
-    CONTRACT_ADDRESSES.LOCAL
+    CONTRACT_ADDRESSES[LOCALHOST_CHAIN_ID]
   );
   const [contractInstance, setContractInstance] = useState<
     Contract | undefined
   >(undefined);
 
   useEffect(() => {
-    web3?.detectNetwork().then((network) => {
-      const differentAddress: string = CONTRACT_ADDRESSES[network.name];
-      if (differentAddress) {
-        setContractAddress(differentAddress);
-      } else {
-        console.warn(`Contract address not found in network: ${network.name}`);
-      }
-    });
-  }, [web3]);
+    const newAddress: string = CONTRACT_ADDRESSES[chainId];
+    if (newAddress) {
+      setContractAddress(newAddress);
+    } else {
+      console.warn(
+        `Contract address not found in network with chainId: ${chainId}`
+      );
+    }
+  }, [chainId]);
 
-  const getContract = async (web3: providers.Web3Provider) => {
+  const getContract = async () => {
     if (contractInstance) return contractInstance;
 
     try {
-      const signer = web3.getSigner();
+      const provider = new providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
       const instantiatedContract = new ethers.Contract(
         contractAddress,
         MyToken.abi,
@@ -47,11 +44,11 @@ const useToken = ({ web3 }: Web3Props) => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const getContractInformation = async (): Promise<any | undefined> => {
-    if (!web3) return;
-
     try {
-      const contract = await getContract(web3);
-      const accounts = await web3.listAccounts();
+      const contract = await getContract();
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts',
+      });
       const balance = await contract.balanceOf(accounts[0]);
       const name = await contract.name();
       const symbol = await contract.symbol();
@@ -64,15 +61,15 @@ const useToken = ({ web3 }: Web3Props) => {
   };
 
   async function transferToken(receiverAddress: string, amountToSend: string) {
-    if (!web3 || !receiverAddress || !amountToSend) return;
+    if (!receiverAddress || !amountToSend) return;
 
+    const contract = await getContract();
     const parsedAmount = ethers.utils.parseUnits(amountToSend);
-    const contract = await getContract(web3);
     const transaction = await contract.transfer(receiverAddress, parsedAmount);
     await transaction.wait();
   }
 
-  return [contractAddress, getContractInformation, transferToken] as const;
+  return [getContractInformation, transferToken] as const;
 };
 
 export default useToken;

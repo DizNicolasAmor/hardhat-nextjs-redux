@@ -1,0 +1,29 @@
+export const LOCALHOST_CHAIN_ID = 31337;
+
+export const CONTRACT_ADDRESSES: { [key: number]: string } = {
+  [LOCALHOST_CHAIN_ID]: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+};
+
+const mapChainIdToNetworkName: { [id: number]: string } = {
+  1: 'ethereum',
+  4: 'rinkeby',
+  42: 'kovan',
+  56: 'BSC',
+  137: 'polygon',
+  [LOCALHOST_CHAIN_ID]: 'localhost',
+};
+
+export const getNetworkName = (chainId: number) =>
+  mapChainIdToNetworkName[chainId] || 'unknown';
+
+const mapChainIdToNetworkSymbol: { [id: number]: string } = {
+  1: 'ETH',
+  4: 'ETH',
+  42: 'ETH',
+  56: 'BNB',
+  137: 'MATIC',
+  [LOCALHOST_CHAIN_ID]: 'ETH',
+};
+
+export const getNetworkSymbol = (chainId: number) =>
+  mapChainIdToNetworkSymbol[chainId] || 'unknown';
