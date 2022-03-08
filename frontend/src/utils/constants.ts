@@ -6,10 +6,14 @@ export const CONTRACT_ADDRESSES: { [key: number]: string } = {
 
 const mapChainIdToNetworkName: { [id: number]: string } = {
   1: 'ethereum',
+  3: 'ropsten',
   4: 'rinkeby',
+  5: 'goerli',
   42: 'kovan',
   56: 'BSC',
+  97: 'BSC testnet',
   137: 'polygon',
+  80001: 'mumbai',
   [LOCALHOST_CHAIN_ID]: 'localhost',
 };
 
@@ -18,10 +22,14 @@ export const getNetworkName = (chainId: number) =>
 
 const mapChainIdToNetworkSymbol: { [id: number]: string } = {
   1: 'ETH',
+  3: 'ETH',
   4: 'ETH',
+  5: 'ETH',
   42: 'ETH',
   56: 'BNB',
+  97: 'BNB',
   137: 'MATIC',
+  80001: 'MATIC',
   [LOCALHOST_CHAIN_ID]: 'ETH',
 };
 
