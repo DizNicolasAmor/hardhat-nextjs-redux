@@ -1,8 +1,7 @@
 import { createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
-import { LOCALHOST_CHAIN_ID } from '../../utils/constants';
 
 const initialState = {
-  chainId: LOCALHOST_CHAIN_ID,
+  chainId: 0,
   name: '',
   symbol: '',
 };
@@ -12,7 +11,7 @@ export const networkSlice = createSlice({
   initialState,
   reducers: {
     resetNetwork: (state: Draft<typeof initialState>) => {
-      state.chainId = LOCALHOST_CHAIN_ID;
+      state.chainId = 0;
       state.name = '';
       state.symbol = '';
     },
