@@ -7,13 +7,14 @@ import { renderSectionItem } from '../utils/utilFunctions';
 const NetworkSection: React.FC = () => {
   const { chainId, name, symbol } = useSelector(getNetwork);
   const { address, balance } = useSelector(getUser);
+  const chainIdText = chainId === 0 ? '' : String(chainId);
 
   return (
     <section aria-labelledby="network-section" className="text-center">
       <h1 id="network-section">Welcome to the Network section</h1>
 
       <div className="m-3">
-        {renderSectionItem('Chain id', chainId)}
+        {renderSectionItem('Chain id', chainIdText)}
         {renderSectionItem('Network name', name)}
         {renderSectionItem('Balance', `${balance} ${symbol}`)}
         {renderSectionItem('Address', address)}
