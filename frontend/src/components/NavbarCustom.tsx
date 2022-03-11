@@ -1,22 +1,23 @@
 import React, { FC, useEffect, useState } from 'react';
 import { providers, utils } from 'ethers';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Button, Container, Nav, Navbar } from 'react-bootstrap';
 import ToastCustom from './ToastCustom';
+import { getToast, setToast, resetToast } from '../redux/slices/toastSlice';
 import { resetUser, setUser } from '../redux/slices/userSlice';
 import useNetwork from '../hooks/useNetwork';
 import { resetNetwork, setNetwork } from '../redux/slices/networkSlice';
 import { getNetworkName, getNetworkSymbol } from '../utils/constants';
 
 const NavbarCustom: FC = () => {
-  const [errorMessage, setErrorMessage] = useState<string>('');
   const [isToastOpen, setIsToastOpen] = useState(false);
   const [{ web3 }, handleNetwork] = useNetwork();
+  const { message: toastMessage, type: toastType } = useSelector(getToast);
   const dispatch = useDispatch();
   const resetFields = () => {
     dispatch(resetUser());
     dispatch(resetNetwork());
-    setErrorMessage('');
+    dispatch(resetToast());
   };
 
   useEffect(() => {
@@ -28,10 +29,10 @@ const NavbarCustom: FC = () => {
   }, [web3]);
 
   useEffect(() => {
-    if (errorMessage) {
+    if (toastMessage) {
       setIsToastOpen(true);
     }
-  }, [errorMessage]);
+  }, [toastMessage]);
 
   const setNetworkAccount = async (web3: providers.Web3Provider) => {
     web3
@@ -45,7 +46,14 @@ const NavbarCustom: FC = () => {
           })
         );
       })
-      .catch(setErrorMessage);
+      .catch((reason) => {
+        dispatch(
+          setToast({
+            message: reason,
+            type: 'danger',
+          })
+        );
+      });
     const accounts = await web3.listAccounts();
     const { _hex } = await web3.getBalance(accounts[0]);
 
@@ -58,7 +66,14 @@ const NavbarCustom: FC = () => {
   };
 
   const handleConnect = () => {
-    handleNetwork().catch(setErrorMessage);
+    handleNetwork().catch((reason) => {
+      dispatch(
+        setToast({
+          message: reason,
+          type: 'danger',
+        })
+      );
+    });
   };
 
   return (
@@ -86,10 +101,10 @@ const NavbarCustom: FC = () => {
         </Container>
       </Navbar>
       <ToastCustom
-        body={errorMessage}
+        body={toastMessage}
         onClose={() => setIsToastOpen(false)}
         show={isToastOpen}
-        type="danger"
+        type={toastType}
       />
     </>
   );
