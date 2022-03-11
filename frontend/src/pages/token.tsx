@@ -59,8 +59,8 @@ const TokenSection: React.FC = () => {
     } catch (reason) {
       console.error(reason);
       setErrorMessage('Error when fetching contract');
-      dispatch(setIsLoading(false));
     }
+    dispatch(setIsLoading(false));
   };
 
   const sendToken = async (receiverAddress: string, amountToSend: string) => {
@@ -117,10 +117,17 @@ const TokenSection: React.FC = () => {
     </>
   );
 
+  const renderDefaultMessage = () => (
+    <p className="m-3">You have to connect your wallet to see this section.</p>
+  );
+
+  const renderSpinnerOrContent = () =>
+    isLoading ? <CommonSpinner /> : renderContent();
+
   return (
     <section aria-labelledby="token-section" className="text-center">
       <h1 id="token-section">Welcome to the Token section</h1>
-      {isLoading ? <CommonSpinner /> : renderContent()}
+      {chainId ? renderSpinnerOrContent() : renderDefaultMessage()}
     </section>
   );
 };
