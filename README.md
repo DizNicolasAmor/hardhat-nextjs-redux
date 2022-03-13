@@ -1,12 +1,12 @@
 # hardhat-erc20
 
-This is a basic erc20 dApp built with Hardhat and ReactJS.
+This is a basic erc20 dApp built with Hardhat and React and Redux.
 
 **How it works**
 
-There is a Smart contract in the backend that stores a `name`. This name could be updated with `setName` method. Also, there is a `greet` method that return a string that is a greeting that includes that name.
+In the backend, there is an erc-20 smart contract. The owner of the contract gets the initial balance when deploy and can send tokens in a transaction. Also, anyone can get information about the token: for example the name, symbol and total supply.
 
-In the frontend, the user can fetch those methods.
+In the frontend, the user can see three pages: home, network information and token information.
 
 ## Requirements
 
